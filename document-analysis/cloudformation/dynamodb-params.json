@@ -1,0 +1,18 @@
+[
+    {
+        "ParameterKey": "HashKeyElementName",
+        "ParameterValue": "Microchip Number"
+    },
+    {
+        "ParameterKey": "HashKeyElementType",
+        "ParameterValue": "S"
+    },
+    {
+        "ParameterKey": "ReadCapacityUnits",
+        "ParameterValue": "2"
+    },
+    {
+        "ParameterKey": "WriteCapacityUnits",
+        "ParameterValue": "2"
+    }
+]
