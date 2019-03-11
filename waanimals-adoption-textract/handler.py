@@ -1,4 +1,5 @@
 import boto3
+import os
 from textract.tableparser import TableParser
 
 def dict_to_item(raw):
@@ -19,7 +20,7 @@ def dict_to_item(raw):
 
 def dynamodb_put(item):
     client = boto3.client(service_name='dynamodb')
-    client.put_item(TableName=process.env.ADOPTION_TABLE, Item=item)
+    client.put_item(TableName=os.environ['ADOPTION_TABLE'], Item=item)
 
 def textract(event, context):
     bucketName = event['Records'][0]['s3']['bucket']['name']

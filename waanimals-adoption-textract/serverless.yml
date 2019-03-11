@@ -1,8 +1,11 @@
 service: waanimals-adoption-textract
 
 custom:
-  PRIMARY_KEY: "Microchip Number"
-  ADOPTION_BUCKET: "waanimals-adoption-forms"
+  pythonRequirements:
+    dockerizePip: non-linux
+    noDeploy: []
+  PRIMARY_KEY: Microchip Number
+  ADOPTION_BUCKET: waanimals-adoption-forms
 
 provider:
   name: aws
@@ -17,13 +20,13 @@ provider:
       Action:
         - s3:GetObject
       Resource:
-        - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.ADOPTION_TABLE}
+        - arn:aws:s3:::${self:custom.ADOPTION_BUCKET}/*
     - Effect: Allow
       Action:
         - textract:AnalyzeDocument
       Resource: "*"
   environment:
-    ADOPTION_TABLE: "waanimals-adoption-forms"
+    ADOPTION_TABLE: waanimals-adoption-forms
 
 functions:
   textract:
@@ -36,7 +39,7 @@ functions:
 resources:
   Resources:
     AdoptionDynamoDBTable:
-      Type: "AWS::DynamoDB::Table"
+      Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
           - AttributeName: ${self:custom.PRIMARY_KEY}
@@ -48,3 +51,6 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.ADOPTION_TABLE}
+
+plugins:
+  - serverless-python-requirements
