@@ -1,5 +1,6 @@
 import boto3
 
+
 class TableParser:
 
     def __init__(self, bucket, document):
