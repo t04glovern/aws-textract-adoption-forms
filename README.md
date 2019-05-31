@@ -8,7 +8,7 @@ Consuming and processing WA Animals adoption forms using AWS Textract and placin
 ## Project Setup
 mkdir waanimals-adoption-textract
 cd waanimals-adoption-textract
-serverless create --template aws-python3 --name waanimals-adoption-textract
+serverless create --template aws-python3 --name form-process
 ```
 
 ### Requirements [Workaround]
@@ -17,6 +17,7 @@ Currently the boto3 client deployed to Lambda doesn't include textract. We'll ne
 
 ```bash
 serverless plugin install -n serverless-python-requirements
+npm install
 ```
 
 Create a `requirements.txt` file and add the following to it

@@ -1,4 +1,4 @@
-service: waanimals-adoption-textract
+service: form-process
 
 plugins:
   - serverless-python-requirements
