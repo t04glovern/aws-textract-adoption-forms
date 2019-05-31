@@ -1,20 +1,30 @@
 service: waanimals-adoption-textract
 
+plugins:
+  - serverless-python-requirements
+
 custom:
   pythonRequirements:
     dockerizePip: non-linux
     noDeploy: []
   PRIMARY_KEY: Microchip Number
-  ADOPTION_FORM_TABLE: waanimals-adoption-forms-table
-  ADOPTION_FORM_BUCKET: waanimals-adoption-forms
-  ADOPTION_EMAIL_BUCKET: waanimals-adoption-emails
-  SES_RULE_SET_NAME: waanimals-adoption-form-rule
+  ADOPTION_FORM_TABLE: waanimalsadoptionforms
+  ADOPTION_FORM_BUCKET: waanimalsadoptionforms
+  ADOPTION_EMAIL_BUCKET: waanimalsadoptionemails
+  SES_RULE_SET_NAME: waanimalsadoptionforms
   SES_RULE_SET_EMAIL: contact@devopstar.com
 
 provider:
   name: aws
   runtime: python3.7
+  environment:
+    ADOPTION_FORM_TABLE: ${self:custom.ADOPTION_FORM_TABLE}
+    ADOPTION_FORM_BUCKET: ${self:custom.ADOPTION_FORM_BUCKET}
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - textract:AnalyzeDocument
+      Resource: "*"
     - Effect: Allow
       Action:
         - dynamodb:PutItem
@@ -28,17 +38,20 @@ provider:
         - arn:aws:s3:::${self:custom.ADOPTION_EMAIL_BUCKET}/*
     - Effect: Allow
       Action:
+        - s3:ListBucket
+      Resource:
+        - arn:aws:s3:::${self:custom.ADOPTION_EMAIL_BUCKET}
+    - Effect: Allow
+      Action:
         - s3:GetObject
         - s3:PutObject
       Resource:
         - arn:aws:s3:::${self:custom.ADOPTION_FORM_BUCKET}/*
     - Effect: Allow
       Action:
-        - textract:AnalyzeDocument
-      Resource: "*"
-  environment:
-    ADOPTION_FORM_TABLE: ${self:custom.ADOPTION_FORM_TABLE}
-    ADOPTION_FORM_BUCKET: ${self:custom.ADOPTION_FORM_BUCKET}
+        - s3:ListBucket
+      Resource:
+        - arn:aws:s3:::${self:custom.ADOPTION_FORM_BUCKET}
 
 functions:
   textract:
@@ -57,6 +70,16 @@ functions:
 resources:
   Resources:
 
+    S3BucketWaanimalsadoptionforms:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.ADOPTION_FORM_BUCKET}
+
+    S3BucketWaanimalsadoptionemails:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.ADOPTION_EMAIL_BUCKET}
+
     AdoptionDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -74,7 +97,7 @@ resources:
     S3EMailBucketPermissions:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: ${self:custom.ADOPTION_EMAIL_BUCKET}
+        Bucket: { Ref: S3BucketWaanimalsadoptionemails }
         PolicyDocument:
           Statement:
             - Principal:
@@ -84,7 +107,7 @@ resources:
               Effect: Allow
               Sid: AllowSESPuts
               Resource:
-                Fn::Join: ['', ['arn:aws:s3:::', "${self:custom.ADOPTION_EMAIL_BUCKET}", '/*'] ]
+                Fn::Join: ['', ['arn:aws:s3:::', { Ref: S3BucketWaanimalsadoptionemails }, '/*'] ]
               Condition:
                 StringEquals:
                   "aws:Referer": { Ref: AWS::AccountId }
@@ -100,8 +123,5 @@ resources:
               - ${self:custom.SES_RULE_SET_EMAIL}
             Actions:
               - S3Action:
-                  BucketName: ${self:custom.ADOPTION_EMAIL_BUCKET}
+                  BucketName: { Ref: S3BucketWaanimalsadoptionemails }
                   ObjectKeyPrefix: ""
-
-plugins:
-  - serverless-python-requirements
