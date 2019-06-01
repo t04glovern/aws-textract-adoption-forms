@@ -12,7 +12,7 @@ custom:
   ADOPTION_FORM_BUCKET: waanimalsadoptionforms
   ADOPTION_EMAIL_BUCKET: waanimalsadoptionemails
   SES_RULE_SET_NAME: waanimalsadoptionforms
-  SES_RULE_SET_EMAIL: contact@devopstar.com
+  SES_RULE_SET_EMAIL: contact@waanimals.org.au
 
 provider:
   name: aws
@@ -29,7 +29,7 @@ provider:
       Action:
         - dynamodb:PutItem
       Resource:
-        - { "Fn::GetAtt": ["AdoptionDynamoDBTable", "Arn"] }
+        - { Fn::GetAtt: [AdoptionDynamoDBTable, Arn] }
     - Effect: Allow
       Action:
         - s3:GetObject

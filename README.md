@@ -1,4 +1,4 @@
-# Textract Adoption Form
+# Textract Adoption Form - WA Animals
 
 Consuming and processing WA Animals adoption forms using AWS Textract and placing that data in DynamoDB
 
@@ -8,8 +8,10 @@ Consuming and processing WA Animals adoption forms using AWS Textract and placin
 
 ```bash
 ## Project Setup
-mkdir waanimals-adoption-textract
-cd waanimals-adoption-textract
+mkdir form-process
+cd form-process
+
+npm install -g serverless
 serverless create --template aws-python3 --name form-process
 ```
 
@@ -42,7 +44,7 @@ pythonRequirements:
 
 ```bash
 # Install dependencies
-cd waanimals-adoption-textract
+cd form-process
 npm install
 
 # Install serverless (if you haven't already)
@@ -52,10 +54,12 @@ npm install -g serverless
 serverless deploy
 ```
 
-## Testing
+## Testing (Textract)
+
+To test just the Textract portion of the app, run the following to copy it to your S3 bucket.
 
 ```bash
-aws s3 cp ../docs/adoption-agreement.png s3://
+aws s3 cp ../docs/adoption-agreement.png s3://waanimalsadoptionforms
 ```
 
 ## Attribution

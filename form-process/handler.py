@@ -20,9 +20,10 @@ def textract(event, context):
     )
     table_dict = table_parser.get_table_dict_results()
 
-    # Put dictionary into DynamoDB
-    db_utils = DbUtils()
-    db_utils.put(raw=table_dict)
+    if len(table_dict) > 0:
+        # Put dictionary into DynamoDB
+        db_utils = DbUtils()
+        db_utils.put(raw=table_dict)
 
     return {
         "item": table_dict,
