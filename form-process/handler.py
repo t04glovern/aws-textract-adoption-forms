@@ -81,6 +81,9 @@ def extract_attachment(attachment):
     elif "jpg" in attachment.get_content_type():
         open(tmpDir + str(uuid.uuid4()) + '.jpg', 'wb').write(attachment.get_payload(decode=True))
     elif "pdf" in attachment.get_content_type():
-        open(tmpDir + str(uuid.uuid4()) + '.pdf', 'wb').write(attachment.get_payload(decode=True))
+        fileName = tmpDir + str(uuid.uuid4())
+        open(fileName + '.pdf', 'wb').write(attachment.get_payload(decode=True))
+        os.system('convert -density 300 -background white -alpha background -alpha off %s %s' % (fileName + '.pdf', fileName + '.png'))
+        os.remove(fileName + '.pdf')
     else:
         print('Skipping ' + attachment.get_content_type())

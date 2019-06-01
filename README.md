@@ -2,6 +2,8 @@
 
 Consuming and processing WA Animals adoption forms using AWS Textract and placing that data in DynamoDB
 
+![Architecture](img/architecture.png)
+
 ## Serverless Setup
 
 ```bash
